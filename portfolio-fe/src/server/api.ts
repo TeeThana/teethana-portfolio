@@ -15,7 +15,11 @@ import {
   type OwnerSession,
 } from "./auth";
 import { fetchRepositories, githubUser } from "./github";
-import { getStore, type PortfolioStore } from "./store";
+import {
+  getStore,
+  ProjectUnavailableError,
+  type PortfolioStore,
+} from "./store";
 import { profileSchema, projectPatchSchema } from "./validation";
 import type { GithubRepository } from "@/lib/types";
 
@@ -49,13 +53,13 @@ export function createApi(
     c.set("owner", await readSession(getCookie(c, SESSION_COOKIE)));
     await next();
   });
-  app.get("/health", (c) => {
-    store().db.prepare("SELECT 1").get();
+  app.get("/health", async (c) => {
+    await store().health();
     return c.json({ status: "ok" });
   });
-  app.get("/portfolio", (c) => c.json(store().portfolio()));
-  app.get("/projects/:slug", (c) => {
-    const project = store().project(c.req.param("slug"));
+  app.get("/portfolio", async (c) => c.json(await store().portfolio()));
+  app.get("/projects/:slug", async (c) => {
+    const project = await store().project(c.req.param("slug"));
     return project
       ? c.json(project)
       : c.json({ error: "Project not found" }, 404);
@@ -157,7 +161,9 @@ export function createApi(
       return c.json({ error: "Owner sign-in required" }, 401);
     await next();
   });
-  app.get("/admin/portfolio", (c) => c.json(store().portfolio(true)));
+  app.get("/admin/portfolio", async (c) =>
+    c.json(await store().portfolio(true)),
+  );
   app.patch("/admin/profile", async (c) => {
     const result = profileSchema.safeParse(await c.req.json());
     if (!result.success)
@@ -168,7 +174,7 @@ export function createApi(
         },
         400,
       );
-    return c.json(store().saveProfile(result.data));
+    return c.json(await store().saveProfile(result.data));
   });
   app.patch("/admin/projects/:id", async (c) => {
     const result = projectPatchSchema.safeParse(await c.req.json());
@@ -181,11 +187,15 @@ export function createApi(
         400,
       );
     try {
-      const project = store().updateProject(c.req.param("id"), result.data);
+      const project = await store().updateProject(
+        c.req.param("id"),
+        result.data,
+      );
       return project
         ? c.json(project)
         : c.json({ error: "Project not found" }, 404);
     } catch (error) {
+      if (!(error instanceof ProjectUnavailableError)) throw error;
       return c.json(
         {
           error:
@@ -196,10 +206,9 @@ export function createApi(
     }
   });
   app.post("/admin/github/sync", async (c) => {
+    let repositories: GithubRepository[];
     try {
-      return c.json(
-        store().sync(await (deps.repositories || fetchRepositories)()),
-      );
+      repositories = await (deps.repositories || fetchRepositories)();
     } catch (error) {
       return c.json(
         {
@@ -208,16 +217,14 @@ export function createApi(
         502,
       );
     }
+    return c.json(await store().sync(repositories));
   });
   app.notFound((c) => c.json({ error: "Not found" }, 404));
   app.onError((error, c) => {
     if (error instanceof HTTPException) return error.getResponse();
     if (error instanceof SyntaxError)
       return c.json({ error: "Invalid JSON" }, 400);
-    console.error(
-      "Portfolio API failure:",
-      error instanceof Error ? error.message : "Unknown error",
-    );
+    console.error("Portfolio API failure");
     return c.json({ error: "An unexpected error occurred" }, 500);
   });
   return app;

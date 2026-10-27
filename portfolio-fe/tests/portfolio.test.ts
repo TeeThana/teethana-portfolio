@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { randomBytes } from "node:crypto";
 import { sign } from "hono/jwt";
-import { createStore } from "../src/server/store";
+import { testStore } from "./database";
 import { createApi } from "../src/server/api";
 import {
   createSession,
@@ -43,10 +43,10 @@ const headers = (token: string, origin = "http://portfolio.test") => ({
 });
 
 test("hidden and no-longer-public repositories cannot be retrieved through either public API", async () => {
-  const store = createStore(":memory:", false);
+  const store = await testStore();
   try {
-    store.sync([repo(1), repo(2)], true);
-    store.updateProject("github-2", { active: false });
+    await store.sync([repo(1), repo(2)], true);
+    await store.updateProject("github-2", { active: false });
     const api = createApi({ store });
     const response = await api.request("/api/portfolio");
     const body = await response.json();
@@ -55,32 +55,35 @@ test("hidden and no-longer-public repositories cannot be retrieved through eithe
       ["github-1"],
     );
     assert.equal(
-      (await api.request(`/api/projects/${store.projects(true)[1].slug}`))
-        .status,
+      (
+        await api.request(
+          `/api/projects/${(await store.projects(true))[1].slug}`,
+        )
+      ).status,
       404,
     );
-    store.sync([repo(2)]);
-    assert.equal(store.portfolio().projects.length, 0);
+    await store.sync([repo(2)]);
+    assert.equal((await store.portfolio()).projects.length, 0);
   } finally {
-    store.close();
+    await store.close();
   }
 });
-test("GitHub sync preserves curation, imports new work as inactive, and ignores private repositories", () => {
-  const store = createStore(":memory:", false);
+test("GitHub sync preserves curation, imports new work as inactive, and ignores private repositories", async () => {
+  const store = await testStore();
   try {
-    store.sync([repo(1)], true);
-    store.updateProject("github-1", {
+    await store.sync([repo(1)], true);
+    await store.updateProject("github-1", {
       title: "My curated title",
       summary: "My story",
       sortOrder: 12,
       coverColor: "#123456",
     });
-    store.sync([
+    await store.sync([
       { ...repo(1), description: "Changed on GitHub", stargazers_count: 5 },
       repo(2),
       { ...repo(3), private: true },
     ]);
-    const projects = store.projects(true);
+    const projects = await store.projects(true);
     assert.equal(projects.length, 2);
     const first = projects.find((p) => p.id === "github-1")!;
     assert.equal(first.title, "My curated title");
@@ -90,11 +93,11 @@ test("GitHub sync preserves curation, imports new work as inactive, and ignores 
     assert.equal(first.coverColor, "#123456");
     assert.equal(projects.find((p) => p.id === "github-2")?.active, false);
   } finally {
-    store.close();
+    await store.close();
   }
 });
 test("all owner API reads and writes reject anonymous or signed non-owner sessions", async () => {
-  const store = createStore(":memory:", false);
+  const store = await testStore();
   try {
     const api = createApi({ store });
     assert.equal((await api.request("/api/admin/portfolio")).status, 401);
@@ -126,7 +129,7 @@ test("all owner API reads and writes reject anonymous or signed non-owner sessio
       401,
     );
   } finally {
-    store.close();
+    await store.close();
   }
 });
 test("expired, tampered, and wrong-algorithm session tokens are rejected", async () => {
@@ -157,9 +160,9 @@ test("expired, tampered, and wrong-algorithm session tokens are rejected", async
   assert.equal(await readSession(wrongAlgorithm), null);
 });
 test("cross-origin writes fail even with a valid owner session; valid edits persist", async () => {
-  const store = createStore(":memory:", false);
+  const store = await testStore();
   try {
-    store.sync([repo(1)], true);
+    await store.sync([repo(1)], true);
     const api = createApi({ store });
     const token = await owner();
     const bad = await api.request("/api/admin/projects/github-1", {
@@ -168,23 +171,23 @@ test("cross-origin writes fail even with a valid owner session; valid edits pers
       body: JSON.stringify({ active: false }),
     });
     assert.equal(bad.status, 403);
-    assert.equal(store.projects()[0].active, true);
+    assert.equal((await store.projects())[0].active, true);
     const good = await api.request("/api/admin/projects/github-1", {
       method: "PATCH",
       headers: headers(token),
       body: JSON.stringify({ active: false, title: "Updated by owner" }),
     });
     assert.equal(good.status, 200);
-    assert.equal(store.projects().length, 0);
-    assert.equal(store.projects(true)[0].title, "Updated by owner");
+    assert.equal((await store.projects()).length, 0);
+    assert.equal((await store.projects(true))[0].title, "Updated by owner");
   } finally {
-    store.close();
+    await store.close();
   }
 });
 test("unsafe links, unknown editable fields, and malformed JSON are rejected", async () => {
-  const store = createStore(":memory:", false);
+  const store = await testStore();
   try {
-    store.sync([repo(1)], true);
+    await store.sync([repo(1)], true);
     const api = createApi({ store }),
       token = await owner();
     for (const body of [
@@ -200,17 +203,17 @@ test("unsafe links, unknown editable fields, and malformed JSON are rejected", a
       assert.equal(result.status, 400);
     }
     assert.equal(
-      store.projects()[0].repoUrl,
+      (await store.projects())[0].repoUrl,
       "https://github.com/TeeThana/project-1",
     );
   } finally {
-    store.close();
+    await store.close();
   }
 });
 test("failed GitHub sync does not hide previously published work", async () => {
-  const store = createStore(":memory:", false);
+  const store = await testStore();
   try {
-    store.sync([repo(1)], true);
+    await store.sync([repo(1)], true);
     const api = createApi({
       store,
       repositories: async () => {
@@ -223,13 +226,13 @@ test("failed GitHub sync does not hide previously published work", async () => {
       body: "{}",
     });
     assert.equal(response.status, 502);
-    assert.equal(store.projects().length, 1);
+    assert.equal((await store.projects()).length, 1);
   } finally {
-    store.close();
+    await store.close();
   }
 });
 test("invalid OAuth callbacks fail closed before contacting GitHub", async () => {
-  const store = createStore(":memory:", false);
+  const store = await testStore();
   try {
     const api = createApi({ store });
     const response = await api.request(
@@ -241,14 +244,82 @@ test("invalid OAuth callbacks fail closed before contacting GitHub", async () =>
       "/login?error=invalid-state",
     );
   } finally {
-    store.close();
+    await store.close();
   }
 });
+test("owner profile and sync endpoints return completed PostgreSQL writes", async () => {
+  const store = await testStore();
+  try {
+    await store.initialize();
+    const profile = {
+      ...(await store.portfolio()).profile,
+      bio: "DevOps & Full Stack ภาษาไทย",
+    };
+    const api = createApi({ store, repositories: async () => [repo(999)] });
+    const authorization = headers(await owner());
+    const saved = await api.request("/api/admin/profile", {
+      method: "PATCH",
+      headers: authorization,
+      body: JSON.stringify(profile),
+    });
+    assert.equal(saved.status, 200);
+    assert.deepEqual(await saved.json(), profile);
+    const { rows } = await store.pool.query(
+      "SELECT document FROM profile WHERE id=1",
+    );
+    assert.deepEqual(rows[0].document, profile);
+    const synced = await api.request("/api/admin/github/sync", {
+      method: "POST",
+      headers: authorization,
+      body: "{}",
+    });
+    assert.equal(synced.status, 200);
+    assert.equal((await synced.json()).added, 1);
+    const admin = await api.request("/api/admin/portfolio", {
+      headers: authorization,
+    });
+    const result = await admin.json();
+    assert.equal(result.profile.bio, profile.bio);
+    assert.equal(
+      result.projects.find((p: { id: string }) => p.id === "github-999").active,
+      false,
+    );
+  } finally {
+    await store.close();
+  }
+});
+
+test("unavailable work cannot be activated but its owner can still edit the story", async () => {
+  const store = await testStore();
+  try {
+    await store.sync([repo(1)], true);
+    await store.sync([]);
+    const api = createApi({ store }),
+      authorization = headers(await owner());
+    const rejected = await api.request("/api/admin/projects/github-1", {
+      method: "PATCH",
+      headers: authorization,
+      body: JSON.stringify({ active: true }),
+    });
+    assert.equal(rejected.status, 400);
+    const edited = await api.request("/api/admin/projects/github-1", {
+      method: "PATCH",
+      headers: authorization,
+      body: JSON.stringify({ content: "Updated story" }),
+    });
+    assert.equal(edited.status, 200);
+    assert.equal((await edited.json()).available, false);
+    assert.equal((await store.projects()).length, 0);
+  } finally {
+    await store.close();
+  }
+});
+
 test("OAuth accepts the exact owner ID and never creates a session for another account", async () => {
   const originalFetch = globalThis.fetch,
     client = process.env.GITHUB_CLIENT_ID,
     secret = process.env.GITHUB_CLIENT_SECRET;
-  const store = createStore(":memory:", false);
+  const store = await testStore();
   let identity = 999;
   process.env.GITHUB_CLIENT_ID = "fixture-client";
   process.env.GITHUB_CLIENT_SECRET = "fixture-client-secret";
@@ -300,6 +371,6 @@ test("OAuth accepts the exact owner ID and never creates a session for another a
     else process.env.GITHUB_CLIENT_ID = client;
     if (secret === undefined) delete process.env.GITHUB_CLIENT_SECRET;
     else process.env.GITHUB_CLIENT_SECRET = secret;
-    store.close();
+    await store.close();
   }
 });

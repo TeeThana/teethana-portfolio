@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+if (process.env.VERCEL) process.exit(0);
 const output = path.resolve(".next/standalone/portfolio-fe");
 if (!fs.existsSync(path.join(output, "server.js")))
   throw new Error("Unexpected standalone output layout");

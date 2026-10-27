@@ -1,4 +1,20 @@
 services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in portfolio-fe/.env.local}
+    ports:
+      - "127.0.0.1:5547:5432"
+    volumes:
+      - portfolio-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
   portfolio:
     build: .
     restart: unless-stopped
@@ -9,8 +25,9 @@ services:
     environment:
       PORT: "3000"
       HOSTNAME: 0.0.0.0
-      DATABASE_PATH: /app/portfolio-fe/data/portfolio.sqlite
-    volumes:
-      - portfolio-data:/app/portfolio-fe/data
+      DATABASE_URL: postgresql://portfolio:${POSTGRES_PASSWORD}@db:5432/portfolio
+    depends_on:
+      db:
+        condition: service_healthy
 volumes:
-  portfolio-data:
+  portfolio-postgres:

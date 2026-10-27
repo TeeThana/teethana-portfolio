@@ -5,8 +5,8 @@ import { HeroField, ProjectBookshelf } from "@/components/portfolio-showcase";
 import { getStore } from "@/server/store";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-export default function Home() {
-  const { profile, projects } = getStore().portfolio();
+export default async function Home() {
+  const { profile, projects } = await getStore().portfolio();
   return (
     <div className="site-shell">
       <Navigation />

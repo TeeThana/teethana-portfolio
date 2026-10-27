@@ -15,6 +15,10 @@
     "typecheck": "npm run typecheck --workspace @teethana/web",
     "test": "npm test --workspace @teethana/web",
     "check": "npm run typecheck && npm test",
-    "db:backup": "npm run db:backup --workspace @teethana/web"
+    "db:migrate": "npm run db:migrate --workspace @teethana/web --",
+    "db:seed": "npm run db:seed --workspace @teethana/web --",
+    "db:import-sqlite": "npm run db:import-sqlite --workspace @teethana/web --",
+    "db:backup": "npm run db:backup --workspace @teethana/web --",
+    "db:restore": "npm run db:restore --workspace @teethana/web --"
   }
 }

@@ -16,7 +16,7 @@ export function config() {
     clientId: process.env.GITHUB_CLIENT_ID || "",
     clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
     authSecret: process.env.AUTH_SECRET || "",
-    databasePath: process.env.DATABASE_PATH || "./data/portfolio.sqlite",
+    databaseUrl: process.env.DATABASE_URL || "",
     githubToken: process.env.GITHUB_TOKEN || "",
   };
 }

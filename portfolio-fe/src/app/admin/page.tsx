@@ -12,6 +12,9 @@ export default async function Admin() {
   const owner = await readSession((await cookies()).get(SESSION_COOKIE)?.value);
   if (!owner) redirect("/login");
   return (
-    <AdminWorkspace initial={getStore().portfolio(true)} owner={owner.login} />
+    <AdminWorkspace
+      initial={await getStore().portfolio(true)}
+      owner={owner.login}
+    />
   );
 }

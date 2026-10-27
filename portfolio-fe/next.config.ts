@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 import path from "node:path";
 
 const config: NextConfig = {
-  output: "standalone",
+  output: process.env.VERCEL ? undefined : "standalone",
   outputFileTracingRoot: path.resolve(process.cwd(), ".."),
   poweredByHeader: false,
   async headers() {

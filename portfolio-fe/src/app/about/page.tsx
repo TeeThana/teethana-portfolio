@@ -11,8 +11,8 @@ import { Navigation, Footer } from "@/components/navigation";
 import { getStore } from "@/server/store";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "About & contact" };
-export default function About() {
-  const { profile } = getStore().portfolio();
+export default async function About() {
+  const { profile } = await getStore().portfolio();
   const contacts = [
     { url: profile.githubUrl, label: "GitHub", icon: Github },
     { url: profile.linkedinUrl, label: "LinkedIn", icon: Linkedin },

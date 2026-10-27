@@ -9,7 +9,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const p = getStore().project((await params).slug);
+  const p = await getStore().project((await params).slug);
   return { title: p?.title || "Project not found", description: p?.summary };
 }
 export default async function ProjectPage({
@@ -17,7 +17,7 @@ export default async function ProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const p = getStore().project((await params).slug);
+  const p = await getStore().project((await params).slug);
   if (!p) notFound();
   return (
     <div className="site-shell">
