@@ -1,0 +1,24 @@
+{
+  "name": "teethana-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "portfolio-fe"
+  ],
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @teethana/web",
+    "build": "npm run build --workspace @teethana/web",
+    "start": "npm run start --workspace @teethana/web",
+    "typecheck": "npm run typecheck --workspace @teethana/web",
+    "test": "npm test --workspace @teethana/web",
+    "check": "npm run typecheck && npm test",
+    "db:migrate": "npm run db:migrate --workspace @teethana/web --",
+    "db:seed": "npm run db:seed --workspace @teethana/web --",
+    "db:import-sqlite": "npm run db:import-sqlite --workspace @teethana/web --",
+    "db:backup": "npm run db:backup --workspace @teethana/web --",
+    "db:restore": "npm run db:restore --workspace @teethana/web --"
+  }
+}
