@@ -109,7 +109,7 @@ export default function Bookshelf({ projects }: { projects: Project[] }) {
       <div className="book-world" ref={host} data-state={status}>
         <canvas
           ref={canvas}
-          aria-label="Interactive 3D project bookshelf. Use the arrows or the project list below."
+          aria-label="Interactive 3D project bookshelf. Scroll to browse books, or use the arrows and the project list below."
         />
         <div id="loading" className="shelf-loading" role="status">
           Preparing the bookshelf…
@@ -218,6 +218,11 @@ export default function Bookshelf({ projects }: { projects: Project[] }) {
           <span id="pointer-label-title" />
         </span>
       </div>
+      {status === "ready" && projects.length > 1 && (
+        <p className="shelf-scroll-hint">
+          Scroll over the shelf to browse · Swipe or use the arrows
+        </p>
+      )}
       {status === "unavailable" && (
         <p className="shelf-fallback" role="status">
           The 3D view is unavailable on this device. Explore every project

@@ -26,10 +26,21 @@ source = source.replace(
   "    openSelected: () => {",
   '    selectVolume: (index) => { if (b === "hero" && D) ar(index, m); },\n    openSelected: () => {',
 );
-source = source.replace(
-  "  function vr(e) {",
-  "  function vr(e) {\n    if (!e.shiftKey && Math.abs(e.deltaY) >= Math.abs(e.deltaX)) return;",
-);
+// Browse volumes with either a mouse wheel or a horizontal trackpad gesture.
+// Keep browser zoom gestures and single-volume shelves on the normal page path.
+const wheelStart = source.indexOf("  function vr(e) {"),
+  wheelEnd = source.indexOf("  function xe(", wheelStart);
+if (wheelStart < 0 || wheelEnd < 0)
+  throw new Error("ThreeUI wheel handler changed; review adapter.");
+source = source.slice(0, wheelStart) + `  function vr(e) {
+    if (b !== "hero" || S.length < 2 || e.ctrlKey || e.metaKey || !e.cancelable) return;
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (!delta) return;
+    e.preventDefault();
+    const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? y.clientHeight : 1;
+    V += A(delta * unit * 0.012, -0.72, 0.72), Ne = 0.14, U();
+  }
+` + source.slice(wheelEnd);
 // Project covers use procedural cloth and motifs instead of the fixed tool atlas.
 const coverStart = source.indexOf("  function wn(e) {"),
   coverEnd = source.indexOf("  function Cn(e) {", coverStart);

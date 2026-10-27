@@ -1,6 +1,6 @@
 # Third-party components
 
-The project uses ThreeUI Community 1.2.0 by Meng To (MIT), including its Bookshelf renderer and Structure Flow. The Bookshelf renderer and its Three.js helpers are vendored in `portfolio-fe/src/vendor/threeui/` with their original MIT license. The adapter replaces the fixed tool catalog with project data and blue procedural covers, exposes selection, scopes one DOM query, preserves normal vertical page scrolling, and adjusts the shelf camera distance. Regenerate it with `node scripts/vendor-threeui.mjs` from `portfolio-fe/` after reviewing any upstream upgrade.
+The project uses ThreeUI Community 1.2.0 by Meng To (MIT), including its Bookshelf renderer and Structure Flow. The Bookshelf renderer and its Three.js helpers are vendored in `portfolio-fe/src/vendor/threeui/` with their original MIT license. The adapter replaces the fixed tool catalog with project data and blue procedural covers, exposes selection, scopes one DOM query, supports vertical and horizontal wheel browsing over the shelf, and adjusts the shelf camera distance. Regenerate it with `node scripts/vendor-threeui.mjs` from `portfolio-fe/` after reviewing any upstream upgrade.
 
 Upstream: https://github.com/MengTo/threeui
 

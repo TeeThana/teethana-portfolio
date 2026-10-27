@@ -1601,11 +1601,12 @@ function fa(Nr, m, He = {}) {
     o < 0 || (e.preventDefault(), ar(o, m), xe(m));
   }
   function vr(e) {
-    if (!e.shiftKey && Math.abs(e.deltaY) >= Math.abs(e.deltaX)) return;
-    if (b !== "hero") return;
+    if (b !== "hero" || S.length < 2 || e.ctrlKey || e.metaKey || !e.cancelable) return;
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    if (!delta) return;
     e.preventDefault();
-    const o = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-    V += A(o * 22e-4, -0.72, 0.72), Ne = 0.14, U();
+    const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? y.clientHeight : 1;
+    V += A(delta * unit * 0.012, -0.72, 0.72), Ne = 0.14, U();
   }
   function xe(e = ie) {
     b === "hero" && (b = "opening", te = 0, K = !1, me = !1, H = 0, Te(), dt = e === m ? Xt.children[O] || ie : e instanceof HTMLElement ? e : ie, u = pt[O], u.contactShadow.visible = !1, Wn(u.data), Qe(!1), Xe.inert = !1, Xe.setAttribute("aria-hidden", "false"), zo.inert = !0, y.classList.add("mode-detail", "is-opening"), Ue.setAttribute("aria-hidden", "true"), _e(-1), u.root.updateWorldMatrix(!0, !0), u.root.matrixWorld.decompose(
