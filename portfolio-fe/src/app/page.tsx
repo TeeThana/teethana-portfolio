@@ -25,8 +25,8 @@ export default function Home() {
             </h1>
             <p className="hero-description">
               {profile.headline}
-              <br />A collection of projects, experiments, and the stories
-              behind them.
+              <br />Web applications, delivery pipelines, and the systems
+              that keep them running.
             </p>
             <div className="hero-actions">
               <a href="#work" className="button button-blue">
@@ -74,7 +74,7 @@ export default function Home() {
             <p className="eyebrow">02 / BEHIND THE WORK</p>
             <h2>Hello, I’m {profile.name.split(" ")[0]}.</h2>
             <p>
-              {profile.bio ||
+              {profile.bio.split(/\n\s*\n/)[0] ||
                 "Get to know the person behind the projects, the tools I work with, and what I’m building next."}
             </p>
           </div>

@@ -2,8 +2,8 @@
   "retrievedAt": "2026-10-27T15:54:46.826Z",
   "profile": {
     "name": "Thana Sukonthabut",
-    "headline": "Fullstack developer & digital maker",
-    "bio": "",
+    "headline": "DevOps Engineer & Full Stack Developer",
+    "bio": "I’m Thana, a DevOps Engineer and Full Stack Developer working across application development, delivery automation, and cloud infrastructure. I connect the details of a usable product with the pipelines, permissions, and runtime behavior it needs to operate reliably.\n\nMy work spans Jenkins and Groovy automation, Kubernetes and OpenShift deployments, AWS infrastructure, and secrets management with HashiCorp Vault. On the application side, I build web interfaces, backend APIs, and business workflows—from repair orders, inventory, and billing to data reporting tools. I value clear release steps, careful validation, and documentation that helps developers and QA teams work together.",
     "location": "",
     "avatarUrl": "https://avatars.githubusercontent.com/u/155901166?v=4",
     "email": "",
@@ -11,7 +11,32 @@
     "linkedinUrl": "",
     "websiteUrl": "",
     "resumeUrl": "",
-    "experience": []
+    "experience": [
+      {
+        "period": "PLATFORM",
+        "role": "CI/CD & platform engineering",
+        "organization": "Jenkins · Groovy · Docker · Kubernetes · OpenShift · AWS",
+        "description": "Develop and maintain delivery workflows for application builds, image creation, deployment, and automated testing. Work on Jenkins administration and scripting, Kubernetes rollout behavior, and OpenShift DeploymentConfig-to-Deployment migration planning, with attention to readiness checks, traffic switching, and rollback. Troubleshoot application delivery across pods, services, ingress, and load balancers."
+      },
+      {
+        "period": "SECURITY",
+        "role": "Secrets, access & release workflows",
+        "organization": "HashiCorp Vault · AWS Secrets Manager · IAM · Service accounts",
+        "description": "Work on secrets-management integration in CI/CD tooling, including ownership, synchronization, release preparation, and rollback behavior. Define how build and test pipelines use service accounts and assume roles across environments. Document these workflows so developers and QA teams understand the access and release steps they need."
+      },
+      {
+        "period": "FULL STACK",
+        "role": "Web applications & business systems",
+        "organization": "TypeScript · React · Next.js · Node.js · Hono · SQL",
+        "description": "Build frontend interfaces, backend APIs, and connected business workflows. Work includes repair orders, inventory reservations, preorders, deposits, billing, and payment-state validation. Keep changes consistent across the UI, API, and database, with regression checks around stock and billing behavior."
+      },
+      {
+        "period": "AUTOMATION",
+        "role": "Reporting tools & application maintenance",
+        "organization": "Python · API integration · Data validation · Automated testing",
+        "description": "Develop tools that retrieve, reconcile, and export data for recurring reports. Improve product selection and aggregation using stable identifiers, and check report totals against source records. Maintain web applications through runtime and dependency patches, access-control checks, CI validation, and release documentation."
+      }
+    ]
   },
   "repositories": [
     {

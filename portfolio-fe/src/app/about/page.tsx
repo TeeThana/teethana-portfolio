@@ -27,7 +27,7 @@ export default function About() {
     <div className="site-shell">
       <Navigation />
       <main id="main" className="about-page">
-        <p className="eyebrow">THE PERSON BEHIND THE PIXELS</p>
+        <p className="eyebrow">FROM APPLICATIONS TO INFRASTRUCTURE</p>
         <div className="about-intro">
           <div>
             <h1>
@@ -69,13 +69,13 @@ export default function About() {
               <span className="portrait-monogram">t.</span>
             )}
             <span className="portrait-caption eyebrow">
-              CODE / CRAFT / CURIOSITY
+              BUILD / SHIP / OPERATE
             </span>
           </div>
         </div>
         {profile.experience.length > 0 && (
           <section className="experience-section">
-            <p className="eyebrow">EXPERIENCE & BACKGROUND</p>
+            <p className="eyebrow">SELECTED EXPERIENCE & TECHNICAL FOCUS</p>
             {profile.experience.map((item, index) => (
               <article key={index} className="experience-row">
                 <span className="eyebrow">{item.period}</span>

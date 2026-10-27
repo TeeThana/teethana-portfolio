@@ -397,9 +397,9 @@ export function AdminWorkspace({
                     <div className="form-grid">
                       {(
                         [
-                          ["period", "Period"],
+                          ["period", "Period or focus area"],
                           ["role", "Role or qualification"],
-                          ["organization", "Company or school"],
+                          ["organization", "Organization or technologies"],
                           ["description", "Description"],
                         ] as const
                       ).map(([key, label]) => (

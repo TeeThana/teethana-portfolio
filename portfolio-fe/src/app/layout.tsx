@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: "%s · Teethana",
   },
   description:
-    "The personal portfolio of Thana Sukonthabut. Explore projects, thoughtful software and the stories behind the code.",
+    "Thana Sukonthabut — DevOps Engineer & Full Stack Developer. Explore work in CI/CD, cloud platforms, web applications, and automation.",
   robots: { index: true, follow: true },
 };
 export default function RootLayout({
