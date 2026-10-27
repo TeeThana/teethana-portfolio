@@ -1,24 +1,38 @@
 {
-  "name": "portfolio-fe",
+  "name": "@teethana/web",
   "version": "0.1.0",
   "private": true,
+  "description": "A blue 3D portfolio with a curated bookshelf, GitHub sync, and an owner-only workspace.",
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "postbuild": "node scripts/prepare-standalone.mjs",
+    "start": "node scripts/start.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "check": "npm run typecheck && npm test",
+    "db:backup": "node scripts/backup.mjs"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.3.5"
+    "@designcodeio/threeui": "1.2.0",
+    "hono": "4.13.14",
+    "lucide-react": "1.62.0",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "three": "0.180.0",
+    "three165": "npm:three@0.165.0",
+    "zod": "4.6.7"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4"
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/three": "0.180.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
   }
 }

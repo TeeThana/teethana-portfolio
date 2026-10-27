@@ -1,0 +1,5 @@
+node_modules
+portfolio-fe/.next
+portfolio-fe/src/vendor/threeui
+package-lock.json
+portfolio-fe/src/server/seed.json

@@ -1,0 +1,20 @@
+{
+  "name": "teethana-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "portfolio-fe"
+  ],
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace @teethana/web",
+    "build": "npm run build --workspace @teethana/web",
+    "start": "npm run start --workspace @teethana/web",
+    "typecheck": "npm run typecheck --workspace @teethana/web",
+    "test": "npm test --workspace @teethana/web",
+    "check": "npm run typecheck && npm test",
+    "db:backup": "npm run db:backup --workspace @teethana/web"
+  }
+}

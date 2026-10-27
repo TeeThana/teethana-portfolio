@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+.env*
+!.env.example
+data/
+backups/
+*.log
+.DS_Store
+.openai/
+.codex/

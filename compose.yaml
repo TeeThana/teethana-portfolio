@@ -1,0 +1,16 @@
+services:
+  portfolio:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - portfolio-fe/.env.local
+    environment:
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      DATABASE_PATH: /app/portfolio-fe/data/portfolio.sqlite
+    volumes:
+      - portfolio-data:/app/portfolio-fe/data
+volumes:
+  portfolio-data:
