@@ -1,0 +1,12 @@
+.git/**
+.vercel/**
+.codex/**
+.openai/**
+**/node_modules/**
+**/.next/**
+**/.env*
+**/data/**
+**/backups/**
+**/*.sqlite*
+**/*.tsbuildinfo
+**/*.log
