@@ -6,7 +6,7 @@
     "portfolio-fe"
   ],
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=24.22.1 <25"
   },
   "scripts": {
     "dev": "npm run dev --workspace @teethana/web",

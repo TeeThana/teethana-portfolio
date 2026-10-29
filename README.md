@@ -6,7 +6,7 @@ A blue 3D portfolio built around a real ThreeUI Bookshelf. Select a project volu
 
 ## Stack
 
-- **Node.js 24 LTS**, TypeScript, **Next.js 16.4.3** App Router, React 19.
+- **Node.js 24.22.1 LTS**, TypeScript, **Next.js 16.4.3** App Router, React 19.
 - **ThreeUI Community 1.2.0**: the free Bookshelf renderer, adapted for project data; Structure Flow in the hero. All required 3D assets are local to the bundle.
 - **Hono** mounted at `/api` inside the Next.js Node runtime. One origin, one server, no separate CORS setup.
 - **PostgreSQL** with `pg`, parameterized SQL, JSONB profile/stack data, versioned migrations, and transactional catalog updates. Compatible with Neon and Vercel Functions.
@@ -17,7 +17,8 @@ The existing `portfolio-fe/` app has been upgraded in place. The root uses npm w
 ## Run locally
 
 ```sh
-nvm use 24
+nvm install 24.22.1
+nvm use 24.22.1
 npm ci
 cp portfolio-fe/.env.example portfolio-fe/.env.local
 # Set a local POSTGRES_PASSWORD and use the same password in both database URLs.
@@ -83,7 +84,7 @@ Set `TEST_DATABASE_URL` in `portfolio-fe/.env.local` or the shell. Its database 
 Use **Vercel Hobby** for this personal portfolio and **Neon Free** for PostgreSQL, within each provider's free allowances. The web app, Hono API, and owner workspace share one Vercel project. PostgreSQL is hosted by Neon and can be provisioned through Vercel Marketplace. You can use the supplied `vercel.app` address without buying a domain.
 
 1. Create a Neon Free database through Vercel Marketplace, then import this repository into Vercel.
-2. Set the Vercel **Root Directory** to `portfolio-fe` and enable inclusion of source files outside that root. `portfolio-fe/vercel.json` installs the root npm workspace and builds the app.
+2. Set the Vercel **Root Directory** to `portfolio-fe` and enable inclusion of source files outside that root. Set **Node.js Version** to `24.x`; Vercel manages minor and patch updates automatically. Local development, CI, and Docker use `24.22.1`, while the npm engine range accepts Node `>=24.22.1 <25` for Vercel compatibility. `portfolio-fe/vercel.json` installs the root npm workspace and builds the app.
 3. Set `DATABASE_URL` to Neon's **pooled** PostgreSQL connection URL. Keep TLS enabled; `sslmode=verify-full` validates the server certificate. Do not expose the URL through a `NEXT_PUBLIC_` variable. The app reuses a small `pg` pool, with Vercel's pool lifecycle integration.
 4. Run `npm run db:migrate` against the Neon database from a trusted local checkout. For a fresh portfolio, run `npm run db:seed`; to preserve an existing local portfolio, run `npm run db:import-sqlite` instead. CLI commands load `portfolio-fe/.env.local` and prefer `DATABASE_URL_UNPOOLED` when supplied. Point these variables at the intended target before running them.
 5. Set `APP_URL` to the final HTTPS URL, configure `AUTH_SECRET`, `GITHUB_CLIENT_ID`, and `GITHUB_CLIENT_SECRET`, and update the GitHub OAuth callback. Keep the secret stable across deployments.
@@ -112,7 +113,7 @@ The same source also builds a standalone Node.js Docker image. PostgreSQL holds 
 docker compose --env-file portfolio-fe/.env.local up --build -d
 ```
 
-For a public Node host, set an HTTPS `APP_URL`, update the OAuth callback, and terminate TLS at a reverse proxy. The image runs as a non-root user. Compose stores PostgreSQL in `portfolio-postgres` and overrides the app connection URL to use the internal `db` service. CLI scripts run from the trusted checkout with Node 24 and installed dependencies; they are not bundled into the production web image.
+For a public Node host, set an HTTPS `APP_URL`, update the OAuth callback, and terminate TLS at a reverse proxy. The image runs as a non-root user. Compose stores PostgreSQL in `portfolio-postgres` and overrides the app connection URL to use the internal `db` service. CLI scripts run from the trusted checkout with Node 24.22.1 and installed dependencies; they are not bundled into the production web image.
 
 `GET /api/health` checks PostgreSQL connectivity and migration version 1. Application reads use a consistent transaction. Catalog syncs serialize with a transaction-scoped advisory lock; project edits lock their own row so concurrent patches preserve each other's fields. No session-level locks are required by the Neon pooler.
 

@@ -4,7 +4,7 @@
   "private": true,
   "description": "A blue 3D portfolio with a curated bookshelf, GitHub sync, and an owner-only workspace.",
   "engines": {
-    "node": ">=24 <25"
+    "node": ">=24.22.1 <25"
   },
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",

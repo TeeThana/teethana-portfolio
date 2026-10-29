@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim AS dependencies
+FROM node:24.22.1-bookworm-slim AS dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY portfolio-fe/package.json ./portfolio-fe/package.json
@@ -9,7 +9,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run typecheck && npm run build
 
-FROM node:24-bookworm-slim AS runner
+FROM node:24.22.1-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 HOSTNAME=0.0.0.0 PORT=3000
 RUN groupadd --system --gid 1001 portfolio && useradd --system --uid 1001 --gid portfolio portfolio
